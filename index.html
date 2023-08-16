@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Real-Time Data Updates</title>
+</head>
+<body>
+  <p id></p>
+  <input type="text" id="inputData" placeholder="Enter data">
+  <button onclick="sendData()">Send Data</button>
+  <ul id="dataList"></ul>
+
+  <script>
+    const socket = new WebSocket('ws://localhost:3001');
+
+    socket.addEventListener('open', (event) => {
+      console.log('Connected to WebSocket server');
+    });
+
+    socket.addEventListener('message', (event) => {
+      const receivedData = JSON.parse(event.data);
+      console.log('Received from server:', receivedData);
+      updateDataList(receivedData);
+    });
+
+    function sendData() {
+      const inputData = document.getElementById('inputData').value;
+      const dataToSend = { value: inputData };
+      socket.send(JSON.stringify(dataToSend));
+    }
+
+    function updateDataList(data) {
+      const dataList = document.getElementById('dataList');
+      const listItem = document.createElement('li');
+      listItem.textContent = data.value;
+      
+      dataList.appendChild(listItem);
+    }
+  </script>
+</body>
+</html>

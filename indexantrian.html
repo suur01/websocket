@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <div>
+        <p id="antA"></p>
+        <p id="antB"></p>
+    </div>
+  <button onclick="requestQueue('A')">Request Queue A</button>
+  <button onclick="requestQueue('B')">Request Queue B</button>
+  <div id="queueNumberDisplay"></div>
+
+  <script>
+    const socket = new WebSocket('ws://localhost:30001');
+
+    socket.addEventListener('open', (event) => {
+      console.log('Connected to WebSocket server');
+    });
+
+    socket.addEventListener('message', (event) => {
+      const receivedData = JSON.parse(event.data); // data yang di terima dari server
+      updateQueueNumberDisplay(receivedData);
+    });
+
+    function requestQueue(type) {
+      socket.send('requestQueue '+type);
+    }
+
+    function updateQueueNumberDisplay(valuedt) {
+        console.log(valuedt.informasi)
+        const queueNumberDisplay = document.getElementById('queueNumberDisplay');
+        queueNumberDisplay.textContent = valuedt.informasi;
+
+        document.getElementById('antA').innerText = valuedt.a
+        document.getElementById('antB').innerText = valuedt.b
+    }
+  </script>
+</body>
+</html>
